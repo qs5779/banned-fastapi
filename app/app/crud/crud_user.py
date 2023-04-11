@@ -15,7 +15,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         db_obj = User(
             email=obj_in.email,
             hashed_password=get_password_hash(obj_in.password),
-            is_superuser=int(obj_in.is_superuser),
+            is_superuser=obj_in.is_superuser,
         )
 
         db.add(db_obj)
@@ -51,10 +51,10 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         return user
 
     def disabled(self, user: User) -> bool:
-        return user.disabled
+        return user.disabled if user.disabled else False
 
     def is_superuser(self, user: User) -> bool:
-        return user.is_superuser
+        return user.is_superuser if user.is_superuser else False
 
 
 user = CRUDUser(User)
