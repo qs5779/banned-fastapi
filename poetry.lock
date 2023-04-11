@@ -1082,7 +1082,7 @@ files = [
 name = "mypy"
 version = "1.2.0"
 description = "Optional static typing for Python"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
@@ -1129,7 +1129,7 @@ reports = ["lxml"]
 name = "mypy-extensions"
 version = "1.0.0"
 description = "Type system extensions for programs checked with the mypy type checker."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.5"
 files = [
@@ -1337,6 +1337,21 @@ typing-extensions = ">=4.2.0"
 [package.extras]
 dotenv = ["python-dotenv (>=0.10.4)"]
 email = ["email-validator (>=1.0.3)"]
+
+[[package]]
+name = "pydantic-extra-types"
+version = "0.0.1"
+description = "Extra Pydantic types."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "pydantic_extra_types-0.0.1-py3-none-any.whl", hash = "sha256:5dc2a3ea91dd5bdfd77bc6a9ae2b6cd5fe6f0adfc22583fbd9d721a8eadcd7dd"},
+    {file = "pydantic_extra_types-0.0.1.tar.gz", hash = "sha256:28ec44e70a804b6fd37517bf8f605734703f6b94adec298f38131d9333ea8447"},
+]
+
+[package.dependencies]
+pydantic = "*"
 
 [[package]]
 name = "pydocstyle"
@@ -1679,6 +1694,7 @@ files = [
 
 [package.dependencies]
 greenlet = {version = "!=0.4.17", markers = "platform_machine == \"aarch64\" or platform_machine == \"ppc64le\" or platform_machine == \"x86_64\" or platform_machine == \"amd64\" or platform_machine == \"AMD64\" or platform_machine == \"win32\" or platform_machine == \"WIN32\""}
+mypy = {version = ">=0.910", optional = true, markers = "extra == \"mypy\""}
 typing-extensions = ">=4.2.0"
 
 [package.extras]
@@ -1756,13 +1772,52 @@ doc = ["reno", "sphinx", "tornado (>=4.5)"]
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
     {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},
     {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
 ]
+
+[[package]]
+name = "types-passlib"
+version = "1.7.7.11"
+description = "Typing stubs for passlib"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "types-passlib-1.7.7.11.tar.gz", hash = "sha256:1fb7ce4a242a65df53331bbd37a044985ab4e1a0fc560be71d5d2ee6c40a0136"},
+    {file = "types_passlib-1.7.7.11-py3-none-any.whl", hash = "sha256:088f327ef07bd0b1d6fa6d175f2aef5133e52b8b69abd751faf3c2cc65e2fb5d"},
+]
+
+[[package]]
+name = "types-pyasn1"
+version = "0.4.0.5"
+description = "Typing stubs for pyasn1"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "types-pyasn1-0.4.0.5.tar.gz", hash = "sha256:d88aca717d15032a6e32050f473fbc73d880b81cb6408bfbea75a3a0bd43a0bd"},
+    {file = "types_pyasn1-0.4.0.5-py3-none-any.whl", hash = "sha256:c5d661b820922b9a99b984b6c2c051734b5ceaa8732206f7196055b5f799ddb6"},
+]
+
+[[package]]
+name = "types-python-jose"
+version = "3.3.4.6"
+description = "Typing stubs for python-jose"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "types-python-jose-3.3.4.6.tar.gz", hash = "sha256:a26ab714efdf95c0735ce2eab265e3a640533110e996e9958c139db17c731707"},
+    {file = "types_python_jose-3.3.4.6-py3-none-any.whl", hash = "sha256:99aeebbb6b8623fb5a87e75af8919a910786d05dc59d1e8c534fb9ce6f5cdba5"},
+]
+
+[package.dependencies]
+types-pyasn1 = "*"
 
 [[package]]
 name = "typing-extensions"
@@ -1848,4 +1903,4 @@ typing_extensions = ">=4.0,<5.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "52f0a49b425cec3e17a24da7003c43d882bdd02d88bffe116d77a9d0c512812d"
+content-hash = "f6224f3d11733b4459e37e43f6ca1c174a291c11c0f137f61ca26005eb399f77"

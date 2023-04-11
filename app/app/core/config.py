@@ -9,9 +9,9 @@ class Settings(BaseSettings):
     SECRET_KEY: str = secrets.token_urlsafe(32)
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
     SERVER_NAME: Optional[str] = "example.com"
-    SERVER_HOST: Optional[AnyHttpUrl] = "http://example.com"
+    SERVER_HOST: Optional[AnyHttpUrl] = AnyHttpUrl("http://example.com")
 
-    PROJECT_NAME: Optional[str] = "FastAPI"
+    PROJECT_NAME: str = "banned-fastapi"
 
     SMTP_TLS: bool = True
     SMTP_PORT: Optional[int] = None
@@ -20,16 +20,15 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: Optional[str] = None
     EMAILS_FROM_EMAIL: Optional[EmailStr] = None
     EMAILS_FROM_NAME: Optional[str] = None
+    EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
+    EMAIL_TEMPLATES_DIR: str = "/app/app/email-template/build"
+    EMAILS_ENABLED: bool = False
 
     @validator("EMAILS_FROM_NAME")
     def get_project_name(cls, v: Optional[str], values: Dict[str, Any]) -> str:
         if not v:
             return values["PROJECT_NAME"]
         return v
-
-    EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
-    EMAIL_TEMPLATE_DIR: str = "/app/app/email-template/build"
-    EMAILS_EMABLED: bool = False
 
     @validator("EMAILS_ENABLED", pre=True, check_fields=False)
     def get_emails_enabled(cls, v: bool, values: Dict[str, Any]) -> bool:
@@ -39,8 +38,8 @@ class Settings(BaseSettings):
             and values.get("EMAILS_FROM_EMAIL")
         )
 
-    EMAIL_TEST_USER: EmailStr = "test@example.com"
-    FIRST_SUPERUSER: Optional[EmailStr] = "admin@example.com"
+    EMAIL_TEST_USER: EmailStr = EmailStr("test@example.com")
+    FIRST_SUPERUSER: Optional[EmailStr] = EmailStr("admin@example.com")
     FIRST_SUPERUSER_PASSWORD: Optional[str] = "password"
     USERS_OPEN_REGISTRATION: bool = False
 

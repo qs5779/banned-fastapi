@@ -3,10 +3,11 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-import emails
+import emails  # type: ignore [import]
 from app.core.config import settings
-from emails.template import JinjaTemplate
+from emails.template import JinjaTemplate  # type: ignore [import]
 from jose import jwt
+from jose.exceptions import JWTError
 
 
 def send_email(
@@ -107,5 +108,5 @@ def verify_password_reset_token(token: str) -> Optional[str]:
             token, settings.SECRET_KEY, algorithms=["HS256"]
         )  # noqa
         return decoded_token["email"]
-    except jwt.JWTError:
+    except JWTError:
         return None
