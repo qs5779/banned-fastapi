@@ -6,8 +6,8 @@ from sqlalchemy import Boolean, Column, Integer, String
 # from sqlalchemy.orm import relationship
 
 
-if TYPE_CHECKING:
-    from .item import Item  # noqa: F401
+# if TYPE_CHECKING:
+#     from .item import Item  # noqa: F401
 
 
 class User(Base):

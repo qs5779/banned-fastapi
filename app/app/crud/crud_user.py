@@ -51,9 +51,19 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         return user
 
     def disabled(self, user: User) -> bool:
+        """Returns True if the user is disabled.
+
+        :param user: user to check
+        :return: True if the user is disabled
+        """
         return user.disabled if user.disabled else False
 
     def is_superuser(self, user: User) -> bool:
+        """Returns True if user is a superuser.
+
+        :param user: user to check
+        :return: True if user is a superuser
+        """
         return user.is_superuser if user.is_superuser else False
 
 

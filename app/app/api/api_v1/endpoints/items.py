@@ -1,6 +1,7 @@
 from typing import Any, List
 
 from app.api import deps
+from app.utils import ensure_int
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -22,8 +23,12 @@ def read_items(
     if crud.user.is_superuser(current_user):
         items = crud.item.get_multi(db, skip=skip, limit=limit)
     else:
+        cuid: int = ensure_int(current_user.id, "current_user.id is None")
         items = crud.item.get_multi_by_owner(
-            db=db, owner_id=current_user.id, skip=skip, limit=limit
+            db=db,
+            owner_id=cuid,
+            skip=skip,
+            limit=limit,
         )
     return items
 
@@ -38,9 +43,12 @@ def create_item(
     """
     Create new item.
     """
+    cuid: int = ensure_int(current_user.id, "current_user.id is None")
     item = crud.item.create_with_owner(
-        db=db, obj_in=item_in, owner_id=current_user.id
-    )  # noqa
+        db=db,
+        obj_in=item_in,
+        owner_id=cuid,
+    )
     return item
 
 

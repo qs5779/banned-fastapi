@@ -9,5 +9,5 @@ mypy: black
 	poetry run mypy app tests/*.py
 
 lint: mypy
-	poetry run flake8 .
+	poetry run flake8 app tests
 	# poetry run doc8 -q docs

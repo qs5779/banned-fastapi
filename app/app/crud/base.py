@@ -43,7 +43,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db: Session,
         *,
         db_obj: ModelType,
-        obj_in: Union[UpdateSchemaType, Dict[str, Any]]
+        obj_in: Union[UpdateSchemaType, Dict[str, Any]],
     ) -> ModelType:
         obj_data = jsonable_encoder(db_obj)
         if isinstance(obj_in, dict):
@@ -52,14 +52,23 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             update_data = obj_in.dict(exclude_unset=True)
         for field in obj_data:
             if field in update_data:
-                setattr(db_obj, field, update_data[field])
+                setattr(db_obj, field, update_data.get(field))
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
         return db_obj
 
-    def remove(self, db: Session, *, id: int) -> ModelType:
-        obj = db.query(self.model).get(id)
-        db.delete(obj)
+    def remove(self, db: Session, *, iid: int) -> ModelType:
+        """Remove and return a crud item from the database.
+
+        Args:
+            db (Session): database session
+            iid (int): item id
+
+        Returns:
+            ModelType: database model type
+        """
+        qobj = db.query(self.model).get(iid)
+        db.delete(qobj)
         db.commit()
-        return cast(ModelType, obj)
+        return cast(ModelType, qobj)

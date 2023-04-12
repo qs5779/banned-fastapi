@@ -1,15 +1,21 @@
 import secrets
+from os import getenv
 from typing import Any, Dict, Optional
 
+from dotenv import load_dotenv
 from pydantic import AnyHttpUrl, BaseSettings, EmailStr, validator
+
+load_dotenv()  # take environment variables from .env.
 
 
 class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     SECRET_KEY: str = secrets.token_urlsafe(32)
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
-    SERVER_NAME: Optional[str] = "example.com"
-    SERVER_HOST: Optional[AnyHttpUrl] = AnyHttpUrl("http://example.com")
+    SERVER_NAME: Optional[str] = getenv("SERVER_NAME", "example.com")
+    SERVER_HOST: Optional[AnyHttpUrl] = AnyHttpUrl(
+        getenv("SERVER_HOST", "http://example.com"),
+    )
 
     PROJECT_NAME: str = "banned-fastapi"
 
@@ -39,8 +45,10 @@ class Settings(BaseSettings):
         )
 
     EMAIL_TEST_USER: EmailStr = EmailStr("test@example.com")
-    FIRST_SUPERUSER: Optional[EmailStr] = EmailStr("admin@example.com")
-    FIRST_SUPERUSER_PASSWORD: Optional[str] = "password"
+    FIRST_SUPERUSER: EmailStr = EmailStr(
+        getenv("FIRST_SUPERUSER", "admin@example.com"),
+    )
+    FIRST_SUPERUSER_PASSWORD: str = getenv("FIRST_SUPERUSER_PASSWORD", "password")
     USERS_OPEN_REGISTRATION: bool = False
 
     class Config:

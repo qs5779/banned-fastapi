@@ -1,4 +1,3 @@
-import os
 from logging.config import fileConfig
 from os import getenv
 
@@ -11,13 +10,13 @@ config = context.config
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
-fileConfig(config.config_file_name)
+fileConfig(config.config_file_name)  # type: ignore [arg-type]
 
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+target_metadata = None  # type: ignore [var-annotated]
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -25,11 +24,12 @@ target_metadata = None
 # ... etc.
 
 
-def get_url():
-    return os.getenv("DB_CONNECTION")
+def get_url() -> str:
+    """Return db connection url as string."""
+    return getenv("DB_CONNECTION", "undefined")
 
 
-def run_migrations_offline():
+def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
 
     This configures the context with just a URL
@@ -53,7 +53,7 @@ def run_migrations_offline():
         context.run_migrations()
 
 
-def run_migrations_online():
+def run_migrations_online() -> None:
     """Run migrations in 'online' mode.
 
     In this scenario we need to create an Engine
@@ -61,6 +61,8 @@ def run_migrations_online():
 
     """
     configuration = config.get_section(config.config_ini_section)
+    if configuration is None:
+        raise ValueError("albemic configuration is None")
     configuration["sqlalchemy.url"] = get_url()
     connectable = engine_from_config(
         configuration,

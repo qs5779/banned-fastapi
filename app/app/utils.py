@@ -10,6 +10,42 @@ from jose import jwt
 from jose.exceptions import JWTError
 
 
+def ensure_int(valor: Optional[int], emsg: str) -> int:
+    """Return the int value if not None.
+
+    Args:
+        valor (int): Value to ensure
+        emsg (str): Error message
+
+    Raises:
+        ValueError: if valor is None
+
+    Returns:
+        int: Valor if not None
+    """
+    if valor is None:
+        raise ValueError(emsg)
+    return valor
+
+
+def ensure_str(valor: Optional[str], emsg: str) -> str:
+    """Return the str value if not None.
+
+    Args:
+        valor (str): Value to ensure
+        emsg (str): Error message
+
+    Raises:
+        ValueError: if valor is None
+
+    Returns:
+        str: Valor if not None
+    """
+    if valor is None:
+        raise ValueError(emsg)
+    return valor
+
+
 def send_email(
     email_to: str,
     subject_template: str = "",

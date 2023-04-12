@@ -6,6 +6,7 @@ from app.core import security
 from app.core.config import settings
 from app.core.security import get_password_hash
 from app.utils import (
+    ensure_str,
     generate_password_reset_token,
     send_reset_password_email,
     verify_password_reset_token,
@@ -70,9 +71,10 @@ def recover_password(email: str, db: Session = Depends(deps.get_db)) -> Any:
             detail="The user with this username does not exist in the system.",
         )
     password_reset_token = generate_password_reset_token(email=email)
-    send_reset_password_email(
-        email_to=user.email, email=email, token=password_reset_token
-    )
+    if user.email is None:
+        raise ValueError()
+    uaddr = ensure_str(user.email, "User id: '{0}' email is None.".format(user.id))
+    send_reset_password_email(email_to=uaddr, email=email, token=password_reset_token)
     return {"msg": "Password recovery email sent"}
 
 
