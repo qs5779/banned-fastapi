@@ -8,10 +8,22 @@ from sqlalchemy.orm import Session
 
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
+    """CRUD User class."""
+
     def get_by_email(self, db: Session, *, email: str) -> Optional[User]:
+        """Returns User object."""
         return db.query(User).filter(User.email == email).first()
 
     def create(self, db: Session, *, obj_in: UserCreate) -> User:
+        """Create a new user in the database.
+
+        Args:
+            db (Session): database session
+            obj_in (UserCreate): User object
+
+        Returns:
+            User: User object
+        """
         db_obj = User(
             email=obj_in.email,
             hashed_password=get_password_hash(obj_in.password),
@@ -28,21 +40,44 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         db: Session,
         *,
         db_obj: User,
-        obj_in: Union[UserUpdate, Dict[str, Any]]  # noqa
+        obj_in: Union[UserUpdate, Dict[str, Any]],
     ) -> User:
+        """Update a user in the database.
+
+        Args:
+            db (Session): database session
+            db_obj (User): User object
+            obj_in (Union[UserUpdate, Dict[str, Any]]): user update data
+
+        Returns:
+            User: User object
+        """
         if isinstance(obj_in, dict):
             update_data = obj_in
         else:
-            update_data = obj_in.dict(exclude_unset=True)  # noqa
+            update_data = obj_in.dict(exclude_unset=True)
         if update_data["password"]:
             hashed_password = get_password_hash(update_data["password"])
-            del update_data["password"]
+            update_data.pop("password")
             update_data["hashed_password"] = hashed_password
         return super().update(db, db_obj=db_obj, obj_in=update_data)
 
     def authenticate(
-        self, db: Session, email: str, password: str
-    ) -> Optional[User]:  # noqa
+        self,
+        db: Session,
+        email: str,
+        password: str,
+    ) -> Optional[User]:
+        """Authenticate the user.
+
+        Args:
+            db (Session): database session
+            email (str): email address
+            password (str): password
+
+        Returns:
+            Optional[User]: User if authentication succeeded
+        """
         user = self.get_by_email(db, email=email)
         if not user:
             return None

@@ -17,16 +17,18 @@ wait_seconds = 1
     after=after_log(logger, logging.WARN),
 )
 def init() -> None:
+    """Initialize backend function."""
     try:
         db = SessionLocal()
         # Try to create session to check if DB is awake
         db.execute("SELECT 1")  # type: ignore [call-overload]
-    except Exception as e:
-        logger.error(e)
-        raise e
+    except Exception as ex:
+        logger.error(ex)
+        raise ex
 
 
 def main() -> None:
+    """Main function."""
     logger.info("Initializing service")
     init()
     logger.info("Service finished initializing")

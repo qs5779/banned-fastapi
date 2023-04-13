@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+# from typing import TYPE_CHECKING
 
 from app.db.database import Base
 from sqlalchemy import Boolean, Column, Integer, String
@@ -11,6 +11,8 @@ from sqlalchemy import Boolean, Column, Integer, String
 
 
 class User(Base):
+    """User class."""
+
     __tablename__ = "user"
     id = Column(Integer, primary_key=True, index=True)
     full_name = Column(String, index=True)

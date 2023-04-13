@@ -8,11 +8,13 @@ logger = logging.getLogger(__name__)
 
 
 def init() -> None:
+    """Initialize database."""
     db = SessionLocal()
     init_db(db)
 
 
 def main() -> None:
+    """Create initial app data."""
     logger.info("Creating initial data")
     init()
     logger.info("Initial data created")

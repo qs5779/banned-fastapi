@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from typing import Any, List
 
 from app.api import deps
@@ -17,20 +18,15 @@ def read_items(
     limit: int = 100,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
-    """
-    Retrieve items.
-    """
+    """Retrieve items."""
     if crud.user.is_superuser(current_user):
-        items = crud.item.get_multi(db, skip=skip, limit=limit)
-    else:
-        cuid: int = ensure_int(current_user.id, "current_user.id is None")
-        items = crud.item.get_multi_by_owner(
-            db=db,
-            owner_id=cuid,
-            skip=skip,
-            limit=limit,
-        )
-    return items
+        return crud.citem.get_multi(db, skip=skip, limit=limit)
+    return crud.citem.get_multi_by_owner(
+        db=db,
+        owner_id=ensure_int(current_user.id, "current_user.id is None"),
+        skip=skip,
+        limit=limit,
+    )
 
 
 @router.post("/", response_model=schemas.Item)
@@ -40,76 +36,71 @@ def create_item(
     item_in: schemas.ItemCreate,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
-    """
-    Create new item.
-    """
+    """Create new item."""
     cuid: int = ensure_int(current_user.id, "current_user.id is None")
-    item = crud.item.create_with_owner(
+    return crud.citem.create_with_owner(
         db=db,
         obj_in=item_in,
         owner_id=cuid,
     )
-    return item
 
 
-@router.put("/{id}", response_model=schemas.Item)
+@router.put("/{iid}", response_model=schemas.Item)
 def update_item(
     *,
     db: Session = Depends(deps.get_db),
-    id: int,
+    iid: int,
     item_in: schemas.ItemUpdate,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
-    """
-    Update an item.
-    """
-    item = crud.item.get(db=db, id=id)
-    if not item:
-        raise HTTPException(status_code=404, detail="Item not found")
-    if not crud.user.is_superuser(current_user) and (
-        item.owner_id != current_user.id
-    ):  # noqa
-        raise HTTPException(status_code=400, detail="Not enough permissions")
-    item = crud.item.update(db=db, db_obj=item, obj_in=item_in)
-    return item
+    """Update an item."""
+    articulo = crud.citem.get(db=db, iid=iid)
+    if not articulo:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Item not found")
+    if not crud.user.is_superuser(current_user):
+        if articulo.owner_id != current_user.id:
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST,
+                detail="Not enough permissions",
+            )
+    return crud.citem.update(db=db, db_obj=articulo, obj_in=item_in)
 
 
-@router.get("/{id}", response_model=schemas.Item)
+@router.get("/{iid}", response_model=schemas.Item)
 def read_item(
     *,
     db: Session = Depends(deps.get_db),
-    id: int,
+    iid: int,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
-    """
-    Get item by ID.
-    """
-    item = crud.item.get(db=db, id=id)
-    if not item:
-        raise HTTPException(status_code=404, detail="Item not found")
-    if not crud.user.is_superuser(current_user) and (
-        item.owner_id != current_user.id
-    ):  # noqa
-        raise HTTPException(status_code=400, detail="Not enough permissions")
-    return item
+    """Get item by ID."""
+    articulo = crud.citem.get(db=db, iid=iid)
+    if not articulo:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Item not found")
+    if not crud.user.is_superuser(current_user):
+        if articulo.owner_id != current_user.id:
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST,
+                detail="Not enough permissions",
+            )
+    return articulo
 
 
-@router.delete("/{id}", response_model=schemas.Item)
+@router.delete("/{iid}", response_model=schemas.Item)
 def delete_item(
     *,
     db: Session = Depends(deps.get_db),
-    id: int,
+    iid: int,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
-    """
-    Delete an item.
-    """
-    item = crud.item.get(db=db, id=id)
-    if not item:
-        raise HTTPException(status_code=404, detail="Item not found")
-    if not crud.user.is_superuser(current_user) and (
-        item.owner_id != current_user.id
-    ):  # noqa
-        raise HTTPException(status_code=400, detail="Not enough permissions")
-    item = crud.item.remove(db=db, id=id)
-    return item
+    """Delete an item."""
+    articulo = crud.citem.get(db=db, iid=iid)
+    if not articulo:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Item not found")
+    if not crud.user.is_superuser(current_user):
+        if articulo.owner_id != current_user.id:
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST,
+                detail="Not enough permissions",
+            )
+    return crud.citem.remove(db=db, iid=iid)

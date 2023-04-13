@@ -10,7 +10,9 @@ from sqlalchemy import Column, ForeignKey, Integer, String
 #     from .user import User  # noqa: F401
 
 
-class Item(Base):
+class Item(Base):  # noqa: WPS110
+    """Item class."""
+
     __tablename__ = "item"
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
