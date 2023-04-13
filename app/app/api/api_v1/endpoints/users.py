@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from typing import Any, List
 
 from app.api import deps
@@ -18,11 +19,8 @@ def read_users(
     limit: int = 100,
     current_user: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
-    """
-    Retrieve users.
-    """
-    users = crud.user.get_multi(db, skip=skip, limit=limit)
-    return users
+    """Retrieve users."""
+    return crud.user.get_multi(db, skip=skip, limit=limit)
 
 
 @router.post("/", response_model=schemas.User)
@@ -32,13 +30,11 @@ def create_user(
     user_in: schemas.UserCreate,
     current_user: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
-    """
-    Create new user.
-    """
+    """Create new user."""
     user = crud.user.get_by_email(db, email=user_in.email)
     if user:
         raise HTTPException(
-            status_code=400,
+            status_code=HTTPStatus.BAD_REQUEST,
             detail="The user with this username already exists in the system.",
         )
     user = crud.user.create(db, obj_in=user_in)
@@ -46,7 +42,7 @@ def create_user(
         send_new_account_email(
             email_to=user_in.email,
             username=user_in.email,
-            password=user_in.password,  # noqa
+            password=user_in.password,
         )
     return user
 
@@ -56,9 +52,7 @@ def read_user_me(
     db: Session = Depends(deps.get_db),
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
-    """
-    Get current user.
-    """
+    """Get current user."""
     return current_user
 
 
@@ -68,15 +62,14 @@ def read_user_by_id(
     current_user: models.User = Depends(deps.get_current_active_user),
     db: Session = Depends(deps.get_db),
 ) -> Any:
-    """
-    Get a specific user by id.
-    """
-    user = crud.user.get(db, id=user_id)
+    """Get a specific user by id."""
+    user = crud.user.get(db, iid=user_id)
     if user == current_user:
         return user
     if not crud.user.is_superuser(current_user):
         raise HTTPException(
-            status_code=400, detail="The user doesn't have enough privileges"
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="The user doesn't have enough privileges",
         )
     return user
 
@@ -89,14 +82,11 @@ def update_user(
     user_in: schemas.UserUpdate,
     current_user: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
-    """
-    Update a user.
-    """
-    user = crud.user.get(db, id=user_id)
+    """Update a user."""
+    user = crud.user.get(db, iid=user_id)
     if not user:
         raise HTTPException(
-            status_code=404,
+            status_code=HTTPStatus.NOT_FOUND,
             detail="The user with this username does not exist in the system",
         )
-    user = crud.user.update(db, db_obj=user, obj_in=user_in)
-    return user
+    return crud.user.update(db, db_obj=user, obj_in=user_in)

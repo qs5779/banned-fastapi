@@ -3,21 +3,63 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-import emails
+import emails  # type: ignore [import]
 from app.core.config import settings
-from emails.template import JinjaTemplate
+from emails.template import JinjaTemplate  # type: ignore [import]
 from jose import jwt
+from jose.exceptions import JWTError
+
+KEMAIL = "email"
+
+
+def ensure_int(valor: Optional[int], emsg: str) -> int:
+    """Return the int value if not None.
+
+    Args:
+        valor (int): Value to ensure
+        emsg (str): Error message
+
+    Raises:
+        ValueError: if valor is None
+
+    Returns:
+        int: Valor if not None
+    """
+    if valor is None:
+        raise ValueError(emsg)
+    return valor
+
+
+def ensure_str(valor: Optional[str], emsg: str) -> str:
+    """Return the str value if not None.
+
+    Args:
+        valor (str): Value to ensure
+        emsg (str): Error message
+
+    Raises:
+        ValueError: if valor is None
+
+    Returns:
+        str: Valor if not None
+    """
+    if valor is None:
+        raise ValueError(emsg)
+    return valor
 
 
 def send_email(
     email_to: str,
     subject_template: str = "",
     html_template: str = "",
-    environment: Dict[str, Any] = {},
+    environment: Optional[Dict[str, Any]] = None,
 ) -> None:
-    assert (
+    """Send an email."""
+    assert (  # noqa: S101
         settings.EMAILS_ENABLED
-    ), "no provided configuration for email variables"  # noqa
+    ), "no provided configuration for email variables"
+    if environment is None:
+        environment = {}
     message = emails.Message(
         subject=JinjaTemplate(subject_template),
         html=JinjaTemplate(html_template),
@@ -31,29 +73,33 @@ def send_email(
     if settings.SMTP_PASSWORD:
         smtp_options["password"] = settings.SMTP_PASSWORD
     response = message.send(to=email_to, render=environment, smtp=smtp_options)
-    logging.info(f"send email result: {response}")
+    logging.info("send email result: {0}".format(response))
 
 
 def send_test_email(email_to: str) -> None:
+    """Send test email."""
     project_name = settings.PROJECT_NAME
-    subject = f"{project_name} - Test email"
-    with open(Path(settings.EMAIL_TEMPLATES_DIR) / "test_email.html") as f:
-        template_str = f.read()
+    subject = "{0} - Test email".format(project_name)
+    with open(Path(settings.EMAIL_TEMPLATES_DIR) / "test_email.html") as ff:
+        template_str = ff.read()
     send_email(
         email_to=email_to,
         subject_template=subject,
         html_template=template_str,
-        environment={"project_name": settings.PROJECT_NAME, "email": email_to},
+        environment={"project_name": settings.PROJECT_NAME, KEMAIL: email_to},
     )
 
 
 def send_reset_password_email(email_to: str, email: str, token: str) -> None:
-    project_name = settings.PROJECT_NAME
-    subject = f"{project_name} - Password recovery for user {email}"
-    with open(Path(settings.EMAIL_TEMPLATES_DIR) / "reset_password.html") as f:
-        template_str = f.read()
+    """Send a reset password email."""
+    subject = "{0} - Password recovery for user {1}".format(
+        settings.PROJECT_NAME,
+        email,
+    )
+    with open(Path(settings.EMAIL_TEMPLATES_DIR) / "reset_password.html") as ff:
+        template_str = ff.read()
     server_host = settings.SERVER_HOST
-    link = f"{server_host}/reset-password?token={token}"
+    link = "{0}/reset-password?token={1}".format(server_host, token)
     send_email(
         email_to=email_to,
         subject_template=subject,
@@ -61,18 +107,19 @@ def send_reset_password_email(email_to: str, email: str, token: str) -> None:
         environment={
             "project_name": settings.PROJECT_NAME,
             "username": email,
-            "email": email_to,
+            KEMAIL: email_to,
             "valid_hours": settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS,
             "link": link,
         },
     )
 
 
-def send_new_account_email(email_to: str, username: str, password: str) -> None:  # noqa
+def send_new_account_email(email_to: str, username: str, password: str) -> None:
+    """Send a new account email."""
     project_name = settings.PROJECT_NAME
-    subject = f"{project_name} - New account for user {username}"
-    with open(Path(settings.EMAIL_TEMPLATES_DIR) / "new_account.html") as f:
-        template_str = f.read()
+    subject = "{0} - New account for user {1}".format(project_name, username)
+    with open(Path(settings.EMAIL_TEMPLATES_DIR) / "new_account.html") as ff:
+        template_str = ff.read()
     link = settings.SERVER_HOST
     send_email(
         email_to=email_to,
@@ -82,30 +129,33 @@ def send_new_account_email(email_to: str, username: str, password: str) -> None:
             "project_name": settings.PROJECT_NAME,
             "username": username,
             "password": password,
-            "email": email_to,
+            KEMAIL: email_to,
             "link": link,
         },
     )
 
 
 def generate_password_reset_token(email: str) -> str:
+    """Generate a new password reset token."""
     delta = timedelta(hours=settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS)
     now = datetime.utcnow()
     expires = now + delta
     exp = expires.timestamp()
-    encoded_jwt = jwt.encode(
+    return jwt.encode(
         {"exp": exp, "nbf": now, "sub": email},
         settings.SECRET_KEY,
-        algorithm="HS256",  # noqa
+        algorithm="HS256",
     )
-    return encoded_jwt
 
 
 def verify_password_reset_token(token: str) -> Optional[str]:
+    """Verify password reset token."""
     try:
         decoded_token = jwt.decode(
-            token, settings.SECRET_KEY, algorithms=["HS256"]
-        )  # noqa
-        return decoded_token["email"]
-    except jwt.JWTError:
+            token,
+            settings.SECRET_KEY,
+            algorithms=["HS256"],
+        )
+        return decoded_token[KEMAIL]
+    except JWTError:
         return None
