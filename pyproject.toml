@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "banned-fastapi"
+name = "banned"
 version = "0.1.0"
-description = ""
+description = "API to store ip addresses banned by fail2ban"
 authors = ["Quien Sabe <qs5779@mail.com>"]
 readme = "README.md"
 packages = [{include = "app"}]
@@ -10,7 +10,7 @@ packages = [{include = "app"}]
 python = "^3.10"
 fastapi = "^0.95.0"
 uvicorn = "^0.21.1"
-pydantic = "^1.10.7"
+pydantic = {extras = ["email"], version = "^1.10.7"}
 python-multipart = "^0.0.6"
 email-validator = "^1.3.1"
 python-jose = "^3.3.0"
@@ -23,6 +23,7 @@ pydantic-extra-types = "^0.0.1"
 types-python-jose = "^3.3.4.7"
 types-passlib = "^1.7.7.11"
 python-dotenv = "^1.0.0"
+psycopg2 = "^2.9.6"
 
 
 [tool.poetry.group.test.dependencies]
@@ -32,6 +33,7 @@ wemake-python-styleguide = "^0.17.0"
 mypy = "^1.2.0"
 pytest = "^7.3.0"
 safety = "^2.3.5"
+pytest-cov = "^4.0.0"
 
 [build-system]
 requires = ["poetry-core"]
