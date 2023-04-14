@@ -1,2 +1,5 @@
 example-fastapi
 TODO.md
+__pycache__/
+.coverage
+coverage.xml
