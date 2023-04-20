@@ -1,3 +1,4 @@
+GITHUB_ACTION ?= no
 
 .PHONY: black mypy lint package unit sunit test clean clean-build clean-pyc clean-test
 
@@ -18,8 +19,22 @@ package:
 	# re-enable when safety supports packaging ^22.0
 	poetry run safety check -i 51499 --full-report
 
-sunit:
+
+
+units: testdbstart
 	poetry run pytest -s tests
+ifeq ($(shell echo $(GITHUB_ACTION) | tr A-Z a-z),no)
+	docker-compose -f ./test-compose.yml stop
+endif
+
+unit: testdbstart
+	poetry run pytest tests
+ifeq ($(shell echo $(GITHUB_ACTION) | tr A-Z a-z),no)
+	docker-compose -f ./test-compose.yml stop
+	rm -f wtfquotes/static/import/erred/*
+endif
+
+sunit:
 
 unit:
 	poetry run pytest tests
@@ -48,3 +63,19 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr htmlcov/
 	rm -fr .pytest_cache
 	rm -fr .mypy_cache
+
+.PHONY: testdbstop testdbstart testdbstatus
+testdbstop:
+ifeq ($(shell echo $(GITHUB_ACTION) | tr A-Z a-z),no)
+	docker-compose -f ./test-compose.yml stop
+endif
+
+testdbstatus:
+	docker-compose -f ./test-compose.yml ps
+
+testdbstart: testdbstop
+ifeq ($(shell echo $(GITHUB_ACTION) | tr A-Z a-z),no)
+	@sudo rm -fr ./testdbdata
+	@mkdir ./testdbdata
+	docker-compose -f ./test-compose.yml up -d --remove-orphans
+endif
