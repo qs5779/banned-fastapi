@@ -3,10 +3,9 @@ import json
 from http import HTTPStatus
 
 import pytest
-from shared import CNAME_SEED_DATA, CONTENT_TYPE, RESERVED_SEED_DATA
-
 from aguada_flask import create_app
 from aguada_flask.models import Cnames, Reserved, User, bcrypt, db
+from shared import CNAME_SEED_DATA, CONTENT_TYPE, RESERVED_SEED_DATA
 
 
 @pytest.fixture(scope="session")

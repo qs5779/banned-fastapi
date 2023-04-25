@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "banned"
-version = "0.1.0"
+name = "wtf-fastapi"
+version = "0.1.1-dev0"
 description = "API to store ip addresses banned by fail2ban"
 authors = ["Quien Sabe <qs5779@mail.com>"]
 readme = "README.md"
