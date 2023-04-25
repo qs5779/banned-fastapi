@@ -19,22 +19,8 @@ package:
 	# re-enable when safety supports packaging ^22.0
 	poetry run safety check -i 51499 --full-report
 
-
-
-units: testdbstart
+units:
 	poetry run pytest -s tests
-ifeq ($(shell echo $(GITHUB_ACTION) | tr A-Z a-z),no)
-	docker-compose -f ./test-compose.yml stop
-endif
-
-unit: testdbstart
-	poetry run pytest tests
-ifeq ($(shell echo $(GITHUB_ACTION) | tr A-Z a-z),no)
-	docker-compose -f ./test-compose.yml stop
-	rm -f wtfquotes/static/import/erred/*
-endif
-
-sunit:
 
 unit:
 	poetry run pytest tests
