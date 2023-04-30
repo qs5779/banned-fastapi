@@ -53,15 +53,15 @@ clean-test: ## remove test and coverage artifacts
 .PHONY: testdbstop testdbstart testdbstatus
 testdbstop:
 ifeq ($(shell echo $(GITHUB_ACTION) | tr A-Z a-z),no)
-	docker-compose -f ./test-compose.yml stop
+	docker-compose -f ./dbtest-compose.yml stop
 endif
 
 testdbstatus:
-	docker-compose -f ./test-compose.yml ps
+	docker-compose -f ./dbtest-compose.yml ps
 
 testdbstart: testdbstop
 ifeq ($(shell echo $(GITHUB_ACTION) | tr A-Z a-z),no)
 	@sudo rm -fr ./testdbdata
 	@mkdir ./testdbdata
-	docker-compose -f ./test-compose.yml up -d --remove-orphans
+	docker-compose -f ./dbtest-compose.yml up -d --remove-orphans
 endif

@@ -3,7 +3,7 @@ version: '3.1'
 
 services:
   db:
-    container_name: quotes_test_db
+    container_name: wtf-fastapi_test_db
     image: postgres:14.5-alpine
     restart: 'no'
     environment:
@@ -14,4 +14,10 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - "./testdbdata:/var/lib/postgresql/data"
+      - "~/.cache/testdbs/wtf-fastapi_test_db:/var/lib/postgresql/data"
+
+  adminer:
+    image: adminer-wtf-fastapi_test_db
+    restart: no
+    ports:
+      - 8080:8080
