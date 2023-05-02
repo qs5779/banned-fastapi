@@ -21,7 +21,7 @@ emails = "^0.6"
 tenacity = "^8.2.2"
 pydantic-extra-types = "^0.0.1"
 types-python-jose = "^3.3.4.7"
-types-passlib = "^1.7.7.11"
+types-passlib = "^1.7.7.12"
 python-dotenv = "^1.0.0"
 psycopg2 = "^2.9.6"
 

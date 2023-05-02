@@ -2133,14 +2133,14 @@ files = [
 
 [[package]]
 name = "types-passlib"
-version = "1.7.7.11"
+version = "1.7.7.12"
 description = "Typing stubs for passlib"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "types-passlib-1.7.7.11.tar.gz", hash = "sha256:1fb7ce4a242a65df53331bbd37a044985ab4e1a0fc560be71d5d2ee6c40a0136"},
-    {file = "types_passlib-1.7.7.11-py3-none-any.whl", hash = "sha256:088f327ef07bd0b1d6fa6d175f2aef5133e52b8b69abd751faf3c2cc65e2fb5d"},
+    {file = "types-passlib-1.7.7.12.tar.gz", hash = "sha256:6abbf2400a8f1cba48639753e3a034af507a765489bb070974d7f68d9ceef883"},
+    {file = "types_passlib-1.7.7.12-py3-none-any.whl", hash = "sha256:7a4df64b53c2746f804aa29fb361974e5894e0df30ff18cf60b9518696ffc9d3"},
 ]
 
 [[package]]
@@ -2254,4 +2254,4 @@ typing_extensions = ">=4.0,<5.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "1fa872b01d1f588ac91ed9f55f1e0bf9ab093f6c2b93ce42b4056eb42daf8ac1"
+content-hash = "883b104520fab8e9fedfdc4b838cfde6243dba71693ac3106401e7829e71aa95"
