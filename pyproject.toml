@@ -16,7 +16,7 @@ email-validator = "^2.0.0"
 python-jose = "^3.3.0"
 passlib = "^1.7.4"
 sqlalchemy = {extras = ["mypy"], version = "^2.0.12"}
-alembic = "^1.10.4"
+alembic = "^1.11.0"
 emails = "^0.6"
 tenacity = "^8.2.2"
 pydantic-extra-types = "^0.0.1"
