@@ -15,7 +15,7 @@ python-multipart = "^0.0.6"
 email-validator = "^2.0.0"
 python-jose = "^3.3.0"
 passlib = "^1.7.4"
-sqlalchemy = {extras = ["mypy"], version = "^2.0.15"}
+sqlalchemy = {extras = ["mypy"], version = "^2.0.16"}
 alembic = "^1.11.1"
 emails = "^0.6"
 tenacity = "^8.2.2"
